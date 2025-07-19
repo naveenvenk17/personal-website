@@ -342,10 +342,10 @@ function scrollCarousel(carouselId, direction) {
     if (direction === 1) {
         // Check if we're at the end
         if (carousel.scrollLeft >= maxScroll) {
-            // Loop back to the beginning
+            // Loop back to the beginning instantly
             carousel.scrollTo({
                 left: 0,
-                behavior: 'smooth'
+                behavior: 'auto'
             });
         } else {
             carousel.scrollBy({
@@ -356,10 +356,10 @@ function scrollCarousel(carouselId, direction) {
     } else {
         // Check if we're at the beginning
         if (carousel.scrollLeft <= 0) {
-            // Loop to the end
+            // Loop to the end instantly
             carousel.scrollTo({
                 left: maxScroll,
-                behavior: 'smooth'
+                behavior: 'auto'
             });
         } else {
             carousel.scrollBy({
@@ -370,7 +370,7 @@ function scrollCarousel(carouselId, direction) {
     }
 }
 
-// Auto-scroll carousels on mobile
+// Auto-scroll carousels with faster rotation and infinite loop
 function autoScrollCarousels() {
     const carousels = document.querySelectorAll('.carousel-container');
 
@@ -385,25 +385,51 @@ function autoScrollCarousels() {
             }, 150);
         });
 
-        // Auto-scroll every 5 seconds if not manually scrolling
+        // Auto-scroll every 1 second for very fast rotation
         setInterval(() => {
-            if (!isScrolling && window.innerWidth > 768) {
+            if (!isScrolling) {
                 const maxScroll = carousel.scrollWidth - carousel.clientWidth;
                 if (carousel.scrollLeft >= maxScroll) {
-                    // Loop back to the beginning
-                    carousel.scrollTo({ left: 0, behavior: 'smooth' });
+                    // Loop back to the beginning instantly
+                    carousel.scrollTo({ left: 0, behavior: 'auto' });
                 } else {
                     carousel.scrollBy({ left: 350, behavior: 'smooth' });
                 }
             }
-        }, 5000);
+        }, 1000); // Reduced to 1000ms for very fast rotation
     });
 }
 
-// Initialize carousel functionality
+// Initialize carousel functionality with infinite loop setup
 document.addEventListener('DOMContentLoaded', () => {
+    setupInfiniteCarousels();
     autoScrollCarousels();
 });
+
+// Setup infinite loop for carousels
+function setupInfiniteCarousels() {
+    const carousels = document.querySelectorAll('.carousel-container');
+
+    carousels.forEach(carousel => {
+        // Clone the first item and append it to the end for seamless loop
+        const firstItem = carousel.firstElementChild;
+        if (firstItem) {
+            const clonedItem = firstItem.cloneNode(true);
+            carousel.appendChild(clonedItem);
+        }
+
+        // Handle the seamless loop when reaching the cloned item
+        carousel.addEventListener('scroll', () => {
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+            if (carousel.scrollLeft >= maxScroll) {
+                // When reaching the cloned item, instantly jump to the real first item
+                setTimeout(() => {
+                    carousel.scrollTo({ left: 0, behavior: 'auto' });
+                }, 300);
+            }
+        });
+    });
+}
 
 // Add touch/swipe support for mobile carousels
 function addTouchSupport() {
