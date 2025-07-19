@@ -53,13 +53,35 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Add fade-in class to elements and observe them
+// Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Add fade-in class to elements and observe them
     const fadeElements = document.querySelectorAll('.service-card, .portfolio-item, .contact-item, .about-content, .section-header');
 
     fadeElements.forEach(el => {
         el.classList.add('fade-in');
         observer.observe(el);
+    });
+
+    // Initialize carousel functionality
+    initializeCarousels();
+
+    // Make project cards clickable
+    const projectCards = document.querySelectorAll('.project-card');
+
+    projectCards.forEach(card => {
+        card.addEventListener('click', function (e) {
+            // Don't trigger if clicking on a link
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                return;
+            }
+
+            // Find the first GitHub link in the card and click it
+            const githubLink = this.querySelector('a[href*="github.com"]');
+            if (githubLink) {
+                githubLink.click();
+            }
+        });
     });
 });
 
@@ -333,9 +355,11 @@ document.querySelectorAll('.contact-details p').forEach(p => {
     }
 });
 
-// Carousel functionality for YouTube videos with infinite loop
+// Carousel functionality for YouTube videos and Strava runs with infinite loop
 function scrollCarousel(carouselId, direction) {
     const carousel = document.getElementById(carouselId);
+    if (!carousel) return;
+
     const scrollAmount = 350; // Width of one card + gap
     const maxScroll = carousel.scrollWidth - carousel.clientWidth;
 
@@ -370,13 +394,15 @@ function scrollCarousel(carouselId, direction) {
     }
 }
 
-// Auto-scroll carousels with faster rotation and infinite loop
+// Auto-scroll carousels with infinite loop
 function autoScrollCarousels() {
     const carousels = document.querySelectorAll('.carousel-container');
 
     carousels.forEach(carousel => {
         let isScrolling = false;
+        let autoScrollInterval;
 
+        // Handle manual scrolling
         carousel.addEventListener('scroll', () => {
             isScrolling = true;
             clearTimeout(carousel.scrollTimeout);
@@ -385,8 +411,8 @@ function autoScrollCarousels() {
             }, 150);
         });
 
-        // Auto-scroll every 1 second for very fast rotation
-        setInterval(() => {
+        // Auto-scroll function
+        function autoScroll() {
             if (!isScrolling) {
                 const maxScroll = carousel.scrollWidth - carousel.clientWidth;
                 if (carousel.scrollLeft >= maxScroll) {
@@ -396,15 +422,15 @@ function autoScrollCarousels() {
                     carousel.scrollBy({ left: 350, behavior: 'smooth' });
                 }
             }
-        }, 1000); // Reduced to 1000ms for very fast rotation
+        }
+
+        // Start auto-scroll every 1 second
+        autoScrollInterval = setInterval(autoScroll, 1000);
+
+        // Store interval reference for cleanup
+        carousel.autoScrollInterval = autoScrollInterval;
     });
 }
-
-// Initialize carousel functionality with infinite loop setup
-document.addEventListener('DOMContentLoaded', () => {
-    setupInfiniteCarousels();
-    autoScrollCarousels();
-});
 
 // Setup infinite loop for carousels
 function setupInfiniteCarousels() {
@@ -438,48 +464,36 @@ function addTouchSupport() {
     carousels.forEach(carousel => {
         let startX = 0;
         let scrollLeft = 0;
+        let isDragging = false;
 
         carousel.addEventListener('touchstart', (e) => {
             startX = e.touches[0].pageX - carousel.offsetLeft;
             scrollLeft = carousel.scrollLeft;
+            isDragging = true;
         });
 
         carousel.addEventListener('touchmove', (e) => {
-            if (!startX) return;
+            if (!isDragging) return;
+            e.preventDefault();
             const x = e.touches[0].pageX - carousel.offsetLeft;
             const walk = (x - startX) * 2;
             carousel.scrollLeft = scrollLeft - walk;
         });
 
         carousel.addEventListener('touchend', () => {
+            isDragging = false;
             startX = 0;
         });
     });
 }
 
-// Initialize touch support
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize all carousel functionality
+function initializeCarousels() {
+    setupInfiniteCarousels();
+    autoScrollCarousels();
     addTouchSupport();
-});
+}
 
-// Make project cards clickable
-document.addEventListener('DOMContentLoaded', () => {
-    const projectCards = document.querySelectorAll('.project-card');
 
-    projectCards.forEach(card => {
-        card.addEventListener('click', function (e) {
-            // Don't trigger if clicking on a link
-            if (e.target.tagName === 'A' || e.target.closest('a')) {
-                return;
-            }
-
-            // Find the first GitHub link in the card and click it
-            const githubLink = this.querySelector('a[href*="github.com"]');
-            if (githubLink) {
-                githubLink.click();
-            }
-        });
-    });
-});
 
 console.log('Portfolio website loaded successfully! 🚀'); 

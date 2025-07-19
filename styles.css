@@ -974,6 +974,8 @@ body {
     scrollbar-width: none;
     -ms-overflow-style: none;
     padding: 1rem 0;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
 }
 
 .carousel-container::-webkit-scrollbar {
@@ -1725,10 +1727,17 @@ body {
     /* Videos Section Mobile */
     .carousel-container {
         gap: 1rem;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .video-card {
+        scroll-snap-align: start;
     }
 
     .video-card {
         min-width: 280px;
+        scroll-snap-align: start;
     }
 
     .video-info h4 {
@@ -1766,7 +1775,12 @@ body {
     }
 
     .run-card {
+        scroll-snap-align: start;
+    }
+
+    .run-card {
         min-width: 280px;
+        scroll-snap-align: start;
     }
 
     .run-info h4 {
