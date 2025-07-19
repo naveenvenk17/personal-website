@@ -361,7 +361,9 @@ function scrollCarousel(carouselId, direction) {
     if (!carousel) return;
 
     const scrollAmount = 350; // Width of one card + gap
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    // Calculate maxScroll excluding the cloned item
+    const totalItems = carousel.children.length - 1; // Exclude cloned item
+    const maxScroll = (totalItems - 1) * scrollAmount;
 
     if (direction === 1) {
         // Check if we're at the end
@@ -414,7 +416,11 @@ function autoScrollCarousels() {
         // Auto-scroll function
         function autoScroll() {
             if (!isScrolling) {
-                const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+                // Calculate maxScroll excluding the cloned item
+                const itemWidth = 350; // Width of one card + gap
+                const totalItems = carousel.children.length - 1; // Exclude cloned item
+                const maxScroll = (totalItems - 1) * itemWidth;
+
                 if (carousel.scrollLeft >= maxScroll) {
                     // Loop back to the beginning instantly
                     carousel.scrollTo({ left: 0, behavior: 'auto' });
