@@ -357,6 +357,15 @@ body {
     align-items: center;
 }
 
+/* Ensure bio content is single column on mobile */
+@media (max-width: 768px) {
+    .bio-content {
+        grid-template-columns: 1fr !important;
+        gap: 2rem;
+        text-align: center;
+    }
+}
+
 .bio-text h3 {
     font-size: 2rem;
     font-weight: 600;
@@ -410,6 +419,22 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
+/* Mobile bio image sizing */
+@media (max-width: 768px) {
+    .bio-img {
+        width: 280px;
+        height: 350px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .bio-img {
+        width: 250px;
+        height: 320px;
+    }
+}
+
 /* Profile Image */
 .profile-image {
     width: 300px;
@@ -419,6 +444,21 @@ body {
     position: relative;
     z-index: 2;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile profile image sizing */
+@media (max-width: 768px) {
+    .profile-image {
+        width: 280px;
+        height: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-image {
+        width: 250px;
+        height: 320px;
+    }
 }
 
 /* Experience Section */
@@ -468,6 +508,21 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Mobile company logo sizing */
+@media (max-width: 768px) {
+    .company-logo {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    .company-logo {
+        width: 60px;
+        height: 60px;
+    }
 }
 
 .experience-info h3 {
@@ -558,6 +613,21 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Mobile institution logo sizing */
+@media (max-width: 768px) {
+    .institution-logo {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .institution-logo {
+        width: 70px;
+        height: 70px;
+    }
 }
 
 .education-info h3 {
@@ -664,6 +734,19 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Mobile project image sizing */
+@media (max-width: 768px) {
+    .project-image {
+        height: 220px;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-image {
+        height: 200px;
+    }
 }
 
 .project-overlay {
@@ -924,6 +1007,19 @@ body {
     object-fit: cover;
 }
 
+/* Mobile video thumbnail sizing */
+@media (max-width: 768px) {
+    .video-thumbnail {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-thumbnail {
+        height: 140px;
+    }
+}
+
 .play-overlay {
     position: absolute;
     top: 50%;
@@ -1056,6 +1152,19 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Mobile run image sizing */
+@media (max-width: 768px) {
+    .run-image {
+        height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .run-image {
+        height: 160px;
+    }
 }
 
 .run-overlay {
@@ -1525,7 +1634,7 @@ body {
 
     /* Bio Section Mobile */
     .bio-content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 2rem;
         text-align: center;
     }
