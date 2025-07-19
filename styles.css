@@ -1488,6 +1488,7 @@ body {
         display: none;
     }
 
+    /* Hero Section Mobile */
     .hero-container {
         grid-template-columns: 1fr;
         text-align: center;
@@ -1498,37 +1499,55 @@ body {
         font-size: 2.5rem;
     }
 
+    .hero-subtitle {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
     .hero-buttons {
+        justify-content: center;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .hero-social-links {
         justify-content: center;
     }
 
-    .contact-content {
+    .hero-portrait {
+        height: 350px;
+    }
+
+    .profile-image {
+        width: 250px;
+        height: 350px;
+    }
+
+    /* Bio Section Mobile */
+    .bio-content {
         grid-template-columns: 1fr;
         gap: 2rem;
+        text-align: center;
     }
 
-    .services-grid {
+    .bio-text h3 {
+        font-size: 1.8rem;
+    }
+
+    .bio-text p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .bio-img {
+        width: 250px;
+        height: 300px;
+    }
+
+    /* Experience Section Mobile */
+    .experience-grid {
         grid-template-columns: 1fr;
-    }
-
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .section-header h2 {
-        font-size: 2rem;
-    }
-
-    .carousel-container {
-        gap: 1rem;
-    }
-
-    .video-card {
-        min-width: 280px;
+        gap: 1.5rem;
     }
 
     .experience-header {
@@ -1537,14 +1556,78 @@ body {
         gap: 1rem;
     }
 
+    .company-logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .experience-info h3 {
+        font-size: 1.3rem;
+    }
+
+    .experience-info h4 {
+        font-size: 1.1rem;
+    }
+
+    .tech-stack {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tech-stack span {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+    }
+
+    /* Education Section Mobile */
     .education-header {
         flex-direction: column;
         text-align: center;
         gap: 1rem;
     }
 
-    .tech-stack {
-        justify-content: center;
+    .institution-logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .education-info h3 {
+        font-size: 1.3rem;
+    }
+
+    .education-info h4 {
+        font-size: 1.1rem;
+    }
+
+    /* Projects Section Mobile */
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .project-info h3 {
+        font-size: 1.3rem;
+    }
+
+    .project-info p {
+        font-size: 0.95rem;
+    }
+
+    /* Videos Section Mobile */
+    .carousel-container {
+        gap: 1rem;
+    }
+
+    .video-card {
+        min-width: 280px;
+    }
+
+    .video-info h4 {
+        font-size: 1rem;
+    }
+
+    .video-info p {
+        font-size: 0.9rem;
     }
 
     .podcast-header {
@@ -1565,15 +1648,249 @@ body {
     .podcast-social-links {
         justify-content: center;
     }
-}
 
-@media (max-width: 480px) {
-    .hero-title {
+    /* Runs Section Mobile */
+    .strava-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .run-card {
+        min-width: 280px;
+    }
+
+    .run-info h4 {
+        font-size: 1.1rem;
+    }
+
+    .run-info p {
+        font-size: 0.9rem;
+    }
+
+    /* Contact Section Mobile */
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .social-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .social-link {
+        padding: 1rem;
+    }
+
+    .social-link span {
+        font-size: 0.9rem;
+    }
+
+    /* Footer Mobile */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    /* General Mobile Adjustments */
+    .section-header h2 {
         font-size: 2rem;
     }
 
+    .section-tag {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Hero Section Small Mobile */
+    .hero-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+
     .hero-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .hero-portrait {
+        height: 300px;
+    }
+
+    .profile-image {
+        width: 200px;
+        height: 280px;
+    }
+
+    .hero-buttons {
+        gap: 1rem;
+    }
+
+    .hero-social-link {
+        width: 40px;
+        height: 40px;
         font-size: 1rem;
+    }
+
+    /* Bio Section Small Mobile */
+    .bio-text h3 {
+        font-size: 1.6rem;
+    }
+
+    .bio-text p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .bio-img {
+        width: 200px;
+        height: 250px;
+    }
+
+    /* Experience Section Small Mobile */
+    .experience-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .experience-info h4 {
+        font-size: 1rem;
+    }
+
+    .experience-content h5 {
+        font-size: 1.1rem;
+    }
+
+    .experience-content p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .tech-stack span {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+    }
+
+    /* Education Section Small Mobile */
+    .education-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .education-info h4 {
+        font-size: 1rem;
+    }
+
+    .education-content p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Projects Section Small Mobile */
+    .project-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .project-info p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .project-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .project-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Videos Section Small Mobile */
+    .video-card {
+        min-width: 250px;
+    }
+
+    .video-info h4 {
+        font-size: 0.95rem;
+    }
+
+    .video-info p {
+        font-size: 0.85rem;
+    }
+
+    .carousel-title {
+        font-size: 1.3rem;
+    }
+
+    .podcast-logo {
+        height: 50px;
+    }
+
+    /* Runs Section Small Mobile */
+    .run-card {
+        min-width: 250px;
+    }
+
+    .run-info h4 {
+        font-size: 1rem;
+    }
+
+    .run-info p {
+        font-size: 0.85rem;
+    }
+
+    .run-details {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    /* Contact Section Small Mobile */
+    .social-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .social-link {
+        padding: 0.8rem;
+    }
+
+    .social-link span {
+        font-size: 0.85rem;
+    }
+
+    .contact-details h3 {
+        font-size: 1.1rem;
+    }
+
+    .contact-details p {
+        font-size: 0.9rem;
+    }
+
+    /* General Small Mobile Adjustments */
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .section-tag {
+        font-size: 0.65rem;
+        padding: 5px 10px;
+    }
+
+    .container {
+        padding: 0 0.8rem;
     }
 
     .btn {
@@ -1581,16 +1898,14 @@ body {
         font-size: 0.9rem;
     }
 
-    .service-card {
-        padding: 1.5rem;
+    /* Navigation Mobile */
+    .nav-menu {
+        padding: 1.5rem 0;
     }
 
-    .portfolio-image {
-        height: 200px;
-    }
-
-    .video-card {
-        min-width: 250px;
+    .nav-link {
+        font-size: 1rem;
+        padding: 1rem 0;
     }
 }
 
