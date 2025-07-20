@@ -421,7 +421,7 @@ function autoScrollCarousels() {
                 const totalItems = carousel.children.length - 1; // Exclude cloned item
                 const maxScrollLeft = (totalItems - 1) * itemWidth;
                 const currentScroll = carousel.scrollLeft;
-                
+
                 // Check if we're at or near the end (with some tolerance for mobile)
                 if (currentScroll >= maxScrollLeft - 10) {
                     // Loop back to the beginning instantly
@@ -432,8 +432,8 @@ function autoScrollCarousels() {
             }
         }
 
-        // Start auto-scroll every 3 seconds (increased from 1 second for better UX)
-        autoScrollInterval = setInterval(autoScroll, 3000);
+        // Start auto-scroll every 1 second (very fast rotation)
+        autoScrollInterval = setInterval(autoScroll, 1000);
 
         // Store interval reference for cleanup
         carousel.autoScrollInterval = autoScrollInterval;
@@ -447,7 +447,7 @@ function setupInfiniteCarousels() {
     carousels.forEach(carousel => {
         // Don't add duplicate clones
         if (carousel.dataset.infiniteSetup === 'true') return;
-        
+
         // Clone the first item and append it to the end for seamless loop
         const firstItem = carousel.firstElementChild;
         if (firstItem) {
@@ -466,7 +466,7 @@ function setupInfiniteCarousels() {
             scrollTimeout = setTimeout(() => {
                 const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
                 const currentScroll = carousel.scrollLeft;
-                
+
                 // Use a tolerance for mobile devices (they might not scroll to exact positions)
                 if (currentScroll >= maxScrollLeft - 20) {
                     // When reaching near the end, instantly jump to the beginning
@@ -504,19 +504,19 @@ function addTouchSupport() {
                 if (carousel.autoScrollInterval) {
                     clearInterval(carousel.autoScrollInterval);
                 }
-                
+
                 carousel.autoScrollInterval = setInterval(() => {
                     const itemWidth = 350;
                     const totalItems = carousel.children.length - 1;
                     const maxScrollLeft = (totalItems - 1) * itemWidth;
                     const currentScroll = carousel.scrollLeft;
-                    
+
                     if (currentScroll >= maxScrollLeft - 10) {
                         carousel.scrollTo({ left: 0, behavior: 'auto' });
                     } else {
                         carousel.scrollBy({ left: itemWidth, behavior: 'smooth' });
                     }
-                }, 3000);
+                }, 1000);
             }, 2000);
         }
 
@@ -532,19 +532,19 @@ function addTouchSupport() {
 
         carousel.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            
+
             const touch = e.touches[0];
             const x = touch.pageX - carousel.offsetLeft;
             const y = touch.pageY - carousel.offsetTop;
-            
+
             const deltaX = Math.abs(x - startX);
             const deltaY = Math.abs(y - startY);
-            
+
             // Determine if this is a horizontal swipe
             if (deltaX > deltaY && deltaX > 10) {
                 isHorizontalSwipe = true;
                 e.preventDefault(); // Prevent vertical scrolling
-                
+
                 const walk = (x - startX) * 1.5; // Adjust sensitivity
                 carousel.scrollLeft = scrollLeft - walk;
             }
@@ -555,22 +555,22 @@ function addTouchSupport() {
                 const touch = e.changedTouches[0];
                 const endX = touch.pageX - carousel.offsetLeft;
                 const deltaX = endX - startX;
-                
+
                 // Snap to nearest item if swipe was significant
                 if (Math.abs(deltaX) > 50) {
                     const itemWidth = 350;
                     const currentItem = Math.round(carousel.scrollLeft / itemWidth);
                     const targetItem = deltaX > 0 ? Math.max(0, currentItem - 1) : currentItem + 1;
-                    
+
                     carousel.scrollTo({
                         left: targetItem * itemWidth,
                         behavior: 'smooth'
                     });
                 }
-                
+
                 resumeAutoScroll();
             }
-            
+
             isDragging = false;
             isHorizontalSwipe = false;
             startX = 0;
@@ -582,7 +582,7 @@ function addTouchSupport() {
             setTimeout(() => {
                 const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
                 const currentScroll = carousel.scrollLeft;
-                
+
                 if (currentScroll >= maxScrollLeft - 20) {
                     carousel.scrollTo({ left: 0, behavior: 'auto' });
                 }
