@@ -343,6 +343,16 @@ body {
     letter-spacing: 1px;
 }
 
+/* Bio section header should be black since it's on white background */
+.bio .section-header h2 {
+    color: #000000;
+}
+
+/* Education section header should be black since it's on white background */
+.education .section-header h2 {
+    color: #000000;
+}
+
 /* Bio Section */
 .bio {
     padding: 100px 0;
@@ -362,7 +372,11 @@ body {
     .bio-content {
         grid-template-columns: 1fr !important;
         gap: 2rem;
-        text-align: center;
+    }
+
+    /* Keep bio text left-aligned on mobile */
+    .bio-text {
+        text-align: left;
     }
 }
 
@@ -849,7 +863,7 @@ body {
 .strava-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1rem;
 }
 
