@@ -355,6 +355,7 @@ document.querySelectorAll('.contact-details p').forEach(p => {
     }
 });
 
+// FIXED CAROUSEL FUNCTIONALITY FOR MOBILE
 // Carousel functionality for YouTube videos and Strava runs with infinite loop
 function scrollCarousel(carouselId, direction) {
     const carousel = document.getElementById(carouselId);
@@ -413,82 +414,179 @@ function autoScrollCarousels() {
             }, 150);
         });
 
-        // Auto-scroll function
+        // Auto-scroll function with better mobile support
         function autoScroll() {
             if (!isScrolling) {
-                // Calculate maxScroll excluding the cloned item
                 const itemWidth = 350; // Width of one card + gap
                 const totalItems = carousel.children.length - 1; // Exclude cloned item
-                const maxScroll = (totalItems - 1) * itemWidth;
-
-                if (carousel.scrollLeft >= maxScroll) {
+                const maxScrollLeft = (totalItems - 1) * itemWidth;
+                const currentScroll = carousel.scrollLeft;
+                
+                // Check if we're at or near the end (with some tolerance for mobile)
+                if (currentScroll >= maxScrollLeft - 10) {
                     // Loop back to the beginning instantly
                     carousel.scrollTo({ left: 0, behavior: 'auto' });
                 } else {
-                    carousel.scrollBy({ left: 350, behavior: 'smooth' });
+                    carousel.scrollBy({ left: itemWidth, behavior: 'smooth' });
                 }
             }
         }
 
-        // Start auto-scroll every 1 second
-        autoScrollInterval = setInterval(autoScroll, 1000);
+        // Start auto-scroll every 3 seconds (increased from 1 second for better UX)
+        autoScrollInterval = setInterval(autoScroll, 3000);
 
         // Store interval reference for cleanup
         carousel.autoScrollInterval = autoScrollInterval;
     });
 }
 
-// Setup infinite loop for carousels
+// Setup infinite loop for carousels with improved mobile support
 function setupInfiniteCarousels() {
     const carousels = document.querySelectorAll('.carousel-container');
 
     carousels.forEach(carousel => {
+        // Don't add duplicate clones
+        if (carousel.dataset.infiniteSetup === 'true') return;
+        
         // Clone the first item and append it to the end for seamless loop
         const firstItem = carousel.firstElementChild;
         if (firstItem) {
             const clonedItem = firstItem.cloneNode(true);
+            clonedItem.classList.add('cloned-item');
             carousel.appendChild(clonedItem);
         }
 
-        // Handle the seamless loop when reaching the cloned item
+        // Mark as setup
+        carousel.dataset.infiniteSetup = 'true';
+
+        // Improved scroll event handler with better mobile support
+        let scrollTimeout;
         carousel.addEventListener('scroll', () => {
-            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-            if (carousel.scrollLeft >= maxScroll) {
-                // When reaching the cloned item, instantly jump to the real first item
-                setTimeout(() => {
-                    carousel.scrollTo({ left: 0, behavior: 'auto' });
-                }, 300);
-            }
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+                const currentScroll = carousel.scrollLeft;
+                
+                // Use a tolerance for mobile devices (they might not scroll to exact positions)
+                if (currentScroll >= maxScrollLeft - 20) {
+                    // When reaching near the end, instantly jump to the beginning
+                    requestAnimationFrame(() => {
+                        carousel.scrollTo({ left: 0, behavior: 'auto' });
+                    });
+                }
+            }, 100); // Reduced timeout for more responsive handling
         });
     });
 }
 
-// Add touch/swipe support for mobile carousels
+// Enhanced touch/swipe support for mobile carousels
 function addTouchSupport() {
     const carousels = document.querySelectorAll('.carousel-container');
 
     carousels.forEach(carousel => {
         let startX = 0;
+        let startY = 0;
         let scrollLeft = 0;
         let isDragging = false;
+        let isHorizontalSwipe = false;
+
+        // Disable auto-scroll when user is interacting
+        function pauseAutoScroll() {
+            if (carousel.autoScrollInterval) {
+                clearInterval(carousel.autoScrollInterval);
+            }
+        }
+
+        // Resume auto-scroll after user interaction
+        function resumeAutoScroll() {
+            // Wait a bit before resuming auto-scroll
+            setTimeout(() => {
+                if (carousel.autoScrollInterval) {
+                    clearInterval(carousel.autoScrollInterval);
+                }
+                
+                carousel.autoScrollInterval = setInterval(() => {
+                    const itemWidth = 350;
+                    const totalItems = carousel.children.length - 1;
+                    const maxScrollLeft = (totalItems - 1) * itemWidth;
+                    const currentScroll = carousel.scrollLeft;
+                    
+                    if (currentScroll >= maxScrollLeft - 10) {
+                        carousel.scrollTo({ left: 0, behavior: 'auto' });
+                    } else {
+                        carousel.scrollBy({ left: itemWidth, behavior: 'smooth' });
+                    }
+                }, 3000);
+            }, 2000);
+        }
 
         carousel.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].pageX - carousel.offsetLeft;
+            const touch = e.touches[0];
+            startX = touch.pageX - carousel.offsetLeft;
+            startY = touch.pageY - carousel.offsetTop;
             scrollLeft = carousel.scrollLeft;
             isDragging = true;
-        });
+            isHorizontalSwipe = false;
+            pauseAutoScroll();
+        }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            e.preventDefault();
-            const x = e.touches[0].pageX - carousel.offsetLeft;
-            const walk = (x - startX) * 2;
-            carousel.scrollLeft = scrollLeft - walk;
+            
+            const touch = e.touches[0];
+            const x = touch.pageX - carousel.offsetLeft;
+            const y = touch.pageY - carousel.offsetTop;
+            
+            const deltaX = Math.abs(x - startX);
+            const deltaY = Math.abs(y - startY);
+            
+            // Determine if this is a horizontal swipe
+            if (deltaX > deltaY && deltaX > 10) {
+                isHorizontalSwipe = true;
+                e.preventDefault(); // Prevent vertical scrolling
+                
+                const walk = (x - startX) * 1.5; // Adjust sensitivity
+                carousel.scrollLeft = scrollLeft - walk;
+            }
+        }, { passive: false });
+
+        carousel.addEventListener('touchend', (e) => {
+            if (isDragging && isHorizontalSwipe) {
+                const touch = e.changedTouches[0];
+                const endX = touch.pageX - carousel.offsetLeft;
+                const deltaX = endX - startX;
+                
+                // Snap to nearest item if swipe was significant
+                if (Math.abs(deltaX) > 50) {
+                    const itemWidth = 350;
+                    const currentItem = Math.round(carousel.scrollLeft / itemWidth);
+                    const targetItem = deltaX > 0 ? Math.max(0, currentItem - 1) : currentItem + 1;
+                    
+                    carousel.scrollTo({
+                        left: targetItem * itemWidth,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                resumeAutoScroll();
+            }
+            
+            isDragging = false;
+            isHorizontalSwipe = false;
+            startX = 0;
+            startY = 0;
         });
 
+        // Handle carousel boundary for touch interactions
         carousel.addEventListener('touchend', () => {
-            isDragging = false;
-            startX = 0;
+            setTimeout(() => {
+                const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+                const currentScroll = carousel.scrollLeft;
+                
+                if (currentScroll >= maxScrollLeft - 20) {
+                    carousel.scrollTo({ left: 0, behavior: 'auto' });
+                }
+            }, 300);
         });
     });
 }
@@ -500,6 +598,14 @@ function initializeCarousels() {
     addTouchSupport();
 }
 
+// Clean up intervals when page unloads
+window.addEventListener('beforeunload', () => {
+    const carousels = document.querySelectorAll('.carousel-container');
+    carousels.forEach(carousel => {
+        if (carousel.autoScrollInterval) {
+            clearInterval(carousel.autoScrollInterval);
+        }
+    });
+});
 
-
-console.log('Portfolio website loaded successfully! 🚀'); 
+console.log('Portfolio website loaded successfully! 🚀');
