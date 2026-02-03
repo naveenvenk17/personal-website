@@ -13,6 +13,137 @@ document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', 
     navMenu.classList.remove('active');
 }));
 
+// ==============================================
+// STARFIELD BACKGROUND SYSTEM
+// ==============================================
+class Starfield {
+    constructor() {
+        this.canvas = document.getElementById('starfield');
+        if (!this.canvas) {
+            this.canvas = document.createElement('canvas');
+            this.canvas.id = 'starfield';
+            document.body.insertBefore(this.canvas, document.body.firstChild);
+        }
+        this.ctx = this.canvas.getContext('2d');
+        this.stars = [];
+        this.starCount = 800;
+        this.rotationSpeed = 0.0001;
+        this.angle = 0;
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.targetX = 0;
+        this.targetY = 0;
+        
+        this.init();
+    }
+    
+    init() {
+        this.resize();
+        this.createStars();
+        this.bindEvents();
+        this.animate();
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.centerX = this.canvas.width / 2;
+        this.centerY = this.canvas.height / 2;
+    }
+    
+    createStars() {
+        this.stars = [];
+        for (let i = 0; i < this.starCount; i++) {
+            // Create stars in a circular distribution
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.random() * Math.max(this.canvas.width, this.canvas.height);
+            this.stars.push({
+                x: Math.cos(angle) * radius,
+                y: Math.sin(angle) * radius,
+                z: Math.random() * 1000,
+                size: Math.random() * 1.5 + 0.5,
+                baseOpacity: Math.random() * 0.5 + 0.5,
+                twinkleSpeed: Math.random() * 0.05 + 0.02,
+                twinkleOffset: Math.random() * Math.PI * 2
+            });
+        }
+    }
+    
+    bindEvents() {
+        window.addEventListener('resize', () => {
+            this.resize();
+            this.createStars();
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            this.targetX = (e.clientX - this.centerX) * 0.02;
+            this.targetY = (e.clientY - this.centerY) * 0.02;
+        });
+    }
+    
+    animate() {
+        // Clear canvas
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Smooth mouse parallax
+        this.mouseX += (this.targetX - this.mouseX) * 0.05;
+        this.mouseY += (this.targetY - this.mouseY) * 0.05;
+        
+        // Rotate the starfield
+        this.angle += this.rotationSpeed;
+        
+        const time = Date.now() * 0.001;
+        
+        // Draw stars
+        this.stars.forEach(star => {
+            // Apply rotation
+            const rotatedX = star.x * Math.cos(this.angle) - star.y * Math.sin(this.angle);
+            const rotatedY = star.x * Math.sin(this.angle) + star.y * Math.cos(this.angle);
+            
+            // Project to 2D with perspective
+            const perspective = 500 / (500 + star.z);
+            const screenX = this.centerX + rotatedX * perspective + this.mouseX;
+            const screenY = this.centerY + rotatedY * perspective + this.mouseY;
+            
+            // Twinkle effect
+            const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) * 0.3 + 0.7;
+            const opacity = star.baseOpacity * twinkle * perspective;
+            const size = star.size * perspective;
+            
+            // Only draw if on screen
+            if (screenX >= 0 && screenX <= this.canvas.width && 
+                screenY >= 0 && screenY <= this.canvas.height) {
+                
+                // Draw glow
+                this.ctx.beginPath();
+                this.ctx.arc(screenX, screenY, size * 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.2})`;
+                this.ctx.fill();
+                
+                // Draw star
+                this.ctx.beginPath();
+                this.ctx.arc(screenX, screenY, size, 0, Math.PI * 2);
+                this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                this.ctx.fill();
+            }
+            
+            // Move star closer (for depth effect)
+            star.z -= 0.1;
+            if (star.z <= 0) {
+                star.z = 1000;
+            }
+        });
+        
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// Initialize starfield when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    new Starfield();
+});
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -56,11 +187,18 @@ const observer = new IntersectionObserver((entries) => {
 // Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Add fade-in class to elements and observe them
-    const fadeElements = document.querySelectorAll('.service-card, .portfolio-item, .contact-item, .about-content, .section-header');
+    const fadeElements = document.querySelectorAll('.service-card, .portfolio-item, .contact-item, .about-content, .section-header, .experience-card');
 
     fadeElements.forEach(el => {
         el.classList.add('fade-in');
         observer.observe(el);
+    });
+    
+    // Add fade-in-up class to experience cards
+    const experienceCards = document.querySelectorAll('.experience-card');
+    experienceCards.forEach((card, index) => {
+        card.classList.add('fade-in-up');
+        card.style.transitionDelay = `${index * 100}ms`;
     });
 
     // Initialize carousel functionality
@@ -218,28 +356,51 @@ document.querySelectorAll('.portfolio-link').forEach(link => {
     });
 });
 
-// Typing animation for hero title
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
+// Typing animation for hero title that handles HTML
+function typeWriterHTML(element, speed = 100) {
+    const originalHTML = element.innerHTML;
+    // Split by both text and HTML tags, preserving tags
+    const parts = originalHTML.split(/(<br\s*\/?>)/gi);
+    let charIndex = 0;
+    let partIndex = 0;
+    let displayedHTML = '';
     element.innerHTML = '';
-
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
+    
+    function typeNext() {
+        if (partIndex < parts.length) {
+            const part = parts[partIndex];
+            
+            // Check if this part is a <br> tag
+            if (part.match(/<br\s*\/?>/i)) {
+                displayedHTML += part;
+                element.innerHTML = displayedHTML;
+                partIndex++;
+                setTimeout(typeNext, speed);
+            } else {
+                // It's text content
+                if (charIndex < part.length) {
+                    displayedHTML += part.charAt(charIndex);
+                    element.innerHTML = displayedHTML;
+                    charIndex++;
+                    setTimeout(typeNext, speed);
+                } else {
+                    // Move to next part
+                    charIndex = 0;
+                    partIndex++;
+                    setTimeout(typeNext, speed / 2);
+                }
+            }
         }
     }
-
-    type();
+    
+    typeNext();
 }
 
 // Initialize typing animation when page loads
 window.addEventListener('load', () => {
-    const heroTitle = document.querySelector('.hero-title');
+    const heroTitle = document.querySelector('.hero-title.typing-animation');
     if (heroTitle) {
-        const originalText = heroTitle.textContent;
-        typeWriter(heroTitle, originalText, 80);
+        typeWriterHTML(heroTitle, 80);
     }
 });
 
@@ -397,12 +558,13 @@ function scrollCarousel(carouselId, direction) {
     }
 }
 
-// Auto-scroll carousels with infinite loop
+// Auto-scroll carousels with infinite loop AND HOVER PAUSE
 function autoScrollCarousels() {
     const carousels = document.querySelectorAll('.carousel-container');
 
     carousels.forEach(carousel => {
         let isScrolling = false;
+        let isPaused = false; // NEW: track if paused by hover
         let autoScrollInterval;
 
         // Handle manual scrolling
@@ -413,10 +575,25 @@ function autoScrollCarousels() {
                 isScrolling = false;
             }, 150);
         });
+        
+        // NEW: Pause on mouse hover (desktop)
+        carousel.addEventListener('mouseenter', () => {
+            isPaused = true;
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        });
+        
+        // NEW: Resume on mouse leave (desktop)
+        carousel.addEventListener('mouseleave', () => {
+            isPaused = false;
+            startAutoScroll();
+        });
 
         // Auto-scroll function with better mobile support
         function autoScroll() {
-            if (!isScrolling) {
+            if (!isScrolling && !isPaused) {
                 const itemWidth = 350; // Width of one card + gap
                 const totalItems = carousel.children.length - 1; // Exclude cloned item
                 const maxScrollLeft = (totalItems - 1) * itemWidth;
@@ -431,12 +608,23 @@ function autoScrollCarousels() {
                 }
             }
         }
+        
+        // Start auto-scroll function
+        function startAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+            }
+            if (!isPaused) {
+                autoScrollInterval = setInterval(autoScroll, 1500); // Faster auto-scroll (1.5 seconds)
+            }
+        }
 
-        // Start auto-scroll every 1 second (very fast rotation)
-        autoScrollInterval = setInterval(autoScroll, 1000);
+        // Start auto-scroll
+        startAutoScroll();
 
         // Store interval reference for cleanup
         carousel.autoScrollInterval = autoScrollInterval;
+        carousel.startAutoScroll = startAutoScroll; // Store for reuse
     });
 }
 
