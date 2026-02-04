@@ -1,11 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="20" fill="#0f172a"/>
-  <!-- Stylized N -->
-  <path d="M25 70 L25 30 L45 70 L45 30" stroke="#38bdf8" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Stylized V -->
-  <path d="M55 30 L65 70 L75 30" stroke="#38bdf8" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Decorative circuit dots -->
-  <circle cx="25" cy="30" r="4" fill="#38bdf8"/>
-  <circle cx="75" cy="30" r="4" fill="#38bdf8"/>
-  <circle cx="65" cy="70" r="4" fill="#38bdf8"/>
+  <rect width="100" height="100" fill="#000000"/>
+  <!-- Sharp N -->
+  <path d="M18 75 L18 25 L18 25 L42 75 L42 25" stroke="#00ff00" stroke-width="8" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+  <!-- Sharp V -->
+  <path d="M52 25 L65 75 L78 25" stroke="#00ff00" stroke-width="8" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
 </svg>
